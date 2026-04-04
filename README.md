@@ -21,7 +21,7 @@ It gives teams a command-center experience for running synthetic societies, trac
 
 If you want open-control-room energy with full data ownership, this is it.
 
-[Docs](docs/) · [Self-Hosting Guide](docs/SELF_HOSTING.md) · [API Reference](#api-reference) · [Quick Start](#quick-start) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)
+[Docs](docs/) · [Self-Hosting Guide](docs/SELF_HOSTING.md) · [Quick Start](#quick-start) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)
 
 ---
 
@@ -88,98 +88,12 @@ Dev URLs:
 - **Frontend**: <http://localhost:5173>
 - **Backend API**: <http://localhost:8000>
 
----
-
-## How To Use ZELL
-
-### 1. Check system health
-
-```bash
-curl http://localhost:8000/health
-curl http://localhost:8000/api/llm/health
-```
-
-### 2. Bootstrap a world
-
-Generate personas and seed the simulation environment:
-
-```bash
-curl -X POST http://localhost:8000/api/bootstrap \
-  -H "Content-Type: application/json" \
-  -d '{"count": 1200, "with_agents": true}'
-```
-
-### 3. Start a simulation run
-
-Inject a world event and run multiple decision cycles:
-
-```bash
-curl -X POST http://localhost:8000/api/simulation/start \
-  -H "Content-Type: application/json" \
-  -d '{"event": "Global supply shock", "cycles": 3, "year": 2026}'
-```
-
-### 4. Explore results
-
-```bash
-# List all simulation runs
-GET /api/dashboard/runs
-
-# Get agent responses for a specific run
-GET /api/dashboard/runs/{run_id}/responses
-
-# Extract relationship graph
-GET /api/graph/relationships?run_id={run_id}
-
-# Hybrid search across responses
-GET /api/dashboard/search?q=inflation&mode=hybrid
-```
-
----
-
-## Configuration
-
-Minimal `.env` (LLM + defaults):
-
-```env
-LLM_PROVIDER=ollama
-LLM_BASE_URL=http://host.docker.internal:11434
-LLM_MODEL=qwen2.5:1.5b-instruct
-CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
-```
-
 [Full configuration reference (all keys + examples).](docs/SELF_HOSTING.md)
 
-### Key Environment Variables
 
-| Variable | Description | Example |
-|---|---|---|
-| `LLM_PROVIDER` | LLM backend provider | `ollama` |
-| `LLM_BASE_URL` | Base URL for the LLM service | `http://host.docker.internal:11434` |
-| `LLM_MODEL` | Model name to use | `qwen2.5:1.5b-instruct` |
-| `LLM_TIMEOUT` | Request timeout in seconds | `60` |
-| `LLM_MAX_TOKENS` | Max tokens per completion | `1024` |
-| `LLM_TEMPERATURE` | Sampling temperature | `0.7` |
-| `LLM_TOP_P` | Nucleus sampling threshold | `0.9` |
-| `CORS_ORIGINS` | Allowed frontend origins | `http://localhost:5173` |
-| `BOOTSTRAP_PROFILE_COUNT` | Profiles to generate on bootstrap | `1200` |
-| `BOOTSTRAP_AGENT_LIMIT` | Agent cap during bootstrap | `100` |
-| `SEMANTIC_SCAN_MAX_RESPONSES` | Max responses scanned for semantic search | `500` |
+## Star History
 
----
-
-## API Reference
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/health` | Service health check |
-| `GET` | `/api/llm/health` | LLM backend connectivity check |
-| `POST` | `/api/bootstrap` | Generate world data and seed agents |
-| `POST` | `/api/simulation/start` | Start a simulation run |
-| `GET` | `/api/dashboard/runs` | List all simulation runs |
-| `GET` | `/api/dashboard/runs/{run_id}/responses` | Get agent responses for a run |
-| `GET` | `/api/graph/relationships` | Extract relationship graph for a run |
-| `GET` | `/api/dashboard/search` | Hybrid search across responses |
+[![Star History Chart](https://api.star-history.com/svg?repos=kushvinth/ZELL&type=date&legend=top-left)](https://www.star-history.com/#kushvinth/ZELL&type=date&legend=top-left)
 
 ---
 
@@ -229,7 +143,7 @@ CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
 - **CORS:** restrict `CORS_ORIGINS` to your real frontend domain in production.
 - **Storage:** `agents.db` and `agents_data/` should be mounted as persistent volumes and excluded from public access.
 - **Reverse proxy:** always put the backend behind Nginx / Caddy / Traefik before exposing publicly.
-- **LLM traffic:** if using a remote LLM backend, ensure the connection is over a trusted network or VPN.
+- **LLM traffic:** If using a remote LLM backend, ensure the connection is over a trusted network or VPN.
 
 Details: [Security policy](SECURITY.md) · [Self-hosting guide](docs/SELF_HOSTING.md)
 
@@ -269,12 +183,6 @@ AI/vibe-coded PRs welcome!
 - Security policy: [SECURITY.md](SECURITY.md)
 - Support guide: [SUPPORT.md](SUPPORT.md)
 - Funding: [.github/FUNDING.yml](.github/FUNDING.yml)
-
----
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=kushvinth/ZELL&type=date&legend=top-left)](https://www.star-history.com/#kushvinth/ZELL&type=date&legend=top-left)
 
 ---
 
