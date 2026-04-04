@@ -10,10 +10,10 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/kushvinth/zell/actions/workflows/ci.yml?branch=main"><img src="https://img.shields.io/github/actions/workflow/status/kushvinth/zell/ci.yml?branch=main&style=for-the-badge" alt="CI status"></a>
-  <a href="https://github.com/kushvinth/zell/releases"><img src="https://img.shields.io/github/v/release/kushvinth/zell?include_prereleases&style=for-the-badge" alt="GitHub release"></a>
-  <a href="https://github.com/kushvinth/zell/blob/main/LICENSE"><img src="https://img.shields.io/github/license/kushvinth/zell?style=for-the-badge" alt="MIT License"></a>
-  <a href="https://github.com/kushvinth/zell/issues"><img src="https://img.shields.io/github/issues/kushvinth/zell?style=for-the-badge" alt="Open Issues"></a>
+  <a href="https://github.com/kushvinth/ZELL/actions/workflows/frontend.yml?branch=main"><img src="https://img.shields.io/github/actions/workflow/status/kushvinth/ZELL/frontend.yml?branch=main&style=for-the-badge" alt="Build status"></a>
+  <a href="https://github.com/kushvinth/ZELL/releases"><img src="https://img.shields.io/github/v/release/kushvinth/ZELL?include_prereleases&style=for-the-badge" alt="GitHub release"></a>
+  <a href="https://github.com/kushvinth/ZELL/blob/main/LICENSE"><img src="https://img.shields.io/github/license/kushvinth/ZELL?style=for-the-badge" alt="MIT License"></a>
+  <a href="https://github.com/kushvinth/ZELL/issues"><img src="https://img.shields.io/github/issues/kushvinth/ZELL?style=for-the-badge" alt="Open Issues"></a>
 </p>
 
 **ZELL** is a _self-hosted knowledge intelligence and multi-agent simulation platform_.
@@ -55,7 +55,7 @@ Full setup guide: [docs/SELF_HOSTING.md](docs/SELF_HOSTING.md)
 ### Option 1: Docker Compose (recommended)
 
 ```bash
-git clone https://github.com/kushvinth/zell
+git clone https://github.com/kushvinth/ZELL
 cd zell
 docker compose up --build
 ```
@@ -274,7 +274,7 @@ AI/vibe-coded PRs welcome!
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=kushvinth/zell&type=date&legend=top-left)](https://www.star-history.com/#kushvinth/zell&type=date&legend=top-left)
+[![Star History Chart](https://api.star-history.com/svg?repos=kushvinth/ZELL&type=date&legend=top-left)](https://www.star-history.com/#kushvinth/ZELL&type=date&legend=top-left)
 
 ---
 
