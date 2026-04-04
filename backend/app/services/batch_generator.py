@@ -9,10 +9,7 @@ import math
 from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
 from datetime import datetime
-from app.services.llm_persona_generator import (
-    generate_and_save_persona,
-    reset_corpus_cache,
-)
+from app.services.llm_persona_generator import generate_and_save_persona
 import logging
 
 logger = logging.getLogger(__name__)
@@ -291,7 +288,6 @@ def reset_batch_generator(max_concurrent: int = 20) -> BatchPersonaGenerator:
     Call this before starting a new batch so old job data is cleared.
     """
     global _batch_generator
-    reset_corpus_cache()
     _batch_generator = BatchPersonaGenerator(max_concurrent=max_concurrent)
     return _batch_generator
 

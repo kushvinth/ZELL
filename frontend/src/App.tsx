@@ -595,7 +595,6 @@ export default function App() {
             data.completed_agents === data.total_agents
           ) {
             setIsSimulating(false);
-            setShowDashboard(true);
             addLog(
               `God Mode Simulation Complete — responses stored in dashboard`,
             );
