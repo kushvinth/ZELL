@@ -17,10 +17,7 @@ from app.services.cache import TTLCache
 from app.services.profile_generator import build_profile_pool
 from app.services.persona_generator import generate_agent_persona
 from app.services.llm import init_llm, get_llm, llm_health
-from app.services.llm_persona_generator import (
-    generate_and_save_persona,
-    reset_corpus_cache,
-)
+from app.services.llm_persona_generator import generate_and_save_persona
 from app.services.batch_generator import get_batch_generator, reset_batch_generator
 from app.services.search import (
     semantic_search,
@@ -91,23 +88,9 @@ logger = logging.getLogger(__name__)
 app = FastAPI(title="Zell Backend", version="0.1.0")
 init_db()
 
-
-def _parse_cors_origins(value: Optional[str]) -> list[str]:
-    if value:
-        parsed = [origin.strip() for origin in value.split(",") if origin.strip()]
-        if parsed:
-            return parsed
-    return [
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-    ]
-
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=_parse_cors_origins(os.getenv("CORS_ORIGINS")),
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
     allow_credentials=True,
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
@@ -840,8 +823,6 @@ def create_agent(request: dict[str, Any]) -> dict[str, Any]:
     }
     """
     try:
-        reset_corpus_cache()
-
         # Create agent with dynamically generated persona
         agent = Agent(
             name=request.get("name", "Unnamed"),
@@ -891,7 +872,6 @@ def generate_persona_endpoint(request: dict[str, Any]):
             )
             from app.services.llm_persona_generator import generate_and_save_persona
 
-            reset_corpus_cache()
             generate_and_save_persona(metadata, agent_id)
             sections = get_persona_sections(agent_id)
 
@@ -1049,7 +1029,6 @@ def post_bootstrap(request: Optional[dict[str, Any]] = None) -> dict[str, Any]:
         # If requested, create agents with personas from profiles
         if with_agents:
             logger.info("[POST /api/bootstrap] Initializing agents from profiles...")
-            reset_corpus_cache()
             agents_data = []
             for profile in profiles[:20]:  # Limit to first 20 for MVP
                 try:
@@ -1121,7 +1100,6 @@ def generate_agent_persona_llm(
             agent_metadata = agent.get_metadata()
 
         # Generate personas via LLM
-        reset_corpus_cache()
         sections = generate_and_save_persona(agent_metadata, agent_id)
 
         return {
@@ -1178,7 +1156,6 @@ async def generate_agents_personas_batch(request: dict[str, Any]) -> dict[str, A
         logger.info(
             f"Starting batch generation for {len(agents)} agents (dry_run={dry_run})"
         )
-        reset_corpus_cache()
 
         from app.simulation.agent import Agent
         from app.simulation.memory import create_memory_system

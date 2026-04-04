@@ -1,14 +1,13 @@
 import sqlite3
 import logging
 import uuid
-import os
 from pathlib import Path
 from typing import Dict, Optional, List, Any
 from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
-DB_PATH = Path(os.getenv("ZELL_DB_PATH", "agents.db"))
+DB_PATH = Path("agents.db")
 
 
 def _ensure_agent_responses_columns(cursor: sqlite3.Cursor) -> None:

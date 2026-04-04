@@ -1,5 +1,3 @@
-# ZELL: Knowledge Intelligence & Multi-Agent Simulation Platform
-
 <p align="center">
     <picture>
         <source media="(prefers-color-scheme: light)" srcset="./assets/banner.png">
@@ -12,10 +10,10 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/kushvinth/zell/actions/workflows/ci.yml?branch=main"><img src="https://img.shields.io/github/actions/workflow/status/kushvinth/zell/ci.yml?branch=main&style=for-the-badge" alt="CI status"></a>
-  <a href="https://github.com/kushvinth/zell/releases"><img src="https://img.shields.io/github/v/release/kushvinth/zell?include_prereleases&style=for-the-badge" alt="GitHub release"></a>
-  <a href="https://github.com/kushvinth/zell/blob/main/LICENSE"><img src="https://img.shields.io/github/license/kushvinth/zell?style=for-the-badge" alt="MIT License"></a>
-  <a href="https://github.com/kushvinth/zell/issues"><img src="https://img.shields.io/github/issues/kushvinth/zell?style=for-the-badge" alt="Open Issues"></a>
+  <a href="https://github.com/kushvinth/ZELL/actions/workflows/frontend.yml?branch=main"><img src="https://img.shields.io/github/actions/workflow/status/kushvinth/ZELL/frontend.yml?branch=main&style=for-the-badge" alt="Build status"></a>
+  <a href="https://github.com/kushvinth/ZELL/releases"><img src="https://img.shields.io/github/v/release/kushvinth/ZELL?include_prereleases&style=for-the-badge" alt="GitHub release"></a>
+  <a href="https://github.com/kushvinth/ZELL/blob/main/LICENSE"><img src="https://img.shields.io/github/license/kushvinth/ZELL?style=for-the-badge" alt="MIT License"></a>
+  <a href="https://github.com/kushvinth/ZELL/issues"><img src="https://img.shields.io/github/issues/kushvinth/ZELL?style=for-the-badge" alt="Open Issues"></a>
 </p>
 
 **ZELL** is a _self-hosted knowledge intelligence and multi-agent simulation platform_.
@@ -23,7 +21,7 @@ It gives teams a command-center experience for running synthetic societies, trac
 
 If you want open-control-room energy with full data ownership, this is it.
 
-[Docs](docs/) · [Self-Hosting Guide](docs/SELF_HOSTING.md) · [API Reference](#api-reference) · [Quick Start](#quick-start) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)
+[Docs](docs/) · [Self-Hosting Guide](docs/SELF_HOSTING.md) · [Quick Start](#quick-start) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)
 
 ---
 
@@ -48,16 +46,57 @@ If you want open-control-room energy with full data ownership, this is it.
 
 ---
 
+## Asset Gallery
+
+### GIFs
+
+| GIF 1 | GIF 2 |
+|---|---|
+| <img src="assets/CleanShot%202026-04-04%20at%2017.57.57.gif" alt="CleanShot demo" width="420"> | <img src="assets/no.gif" alt="Motion preview" width="420"> |
+
+### Dark UI vs Light UI
+
+| Dark UI | Light UI |
+|---|---|
+| <img src="assets/dark_dashboard.png" alt="Dark dashboard" width="420"> | <img src="assets/light_dashboard.png" alt="Light dashboard" width="420"> |
+| <img src="assets/dark_npc_dashboard.png" alt="Dark NPC dashboard" width="420"> | <img src="assets/light%20npc.png" alt="Light NPC panel" width="420"> |
+| <img src="assets/dark_map.jpeg" alt="Dark map" width="420"> | <img src="assets/light_map.jpeg" alt="Light map" width="420"> |
+| <img src="assets/dark_graph.jpeg" alt="Dark graph" width="420"> | <img src="assets/light_graph.jpeg" alt="Light graph" width="420"> |
+| <img src="assets/dark_dashboard1.png" alt="Dark dashboard detail" width="420"> | <img src="https://placehold.co/840x472/000000/000000.png" alt="No light alternative" width="420"> |
+| <img src="https://placehold.co/840x472/000000/000000.png" alt="No dark alternative" width="420"> | <img src="assets/light_graph__.jpeg" alt="Light graph alternate" width="420"> |
+| <img src="https://placehold.co/840x472/000000/000000.png" alt="No dark alternative" width="420"> | <img src="assets/light_wb.png" alt="Light workbench" width="420"> |
+| <img src="https://placehold.co/840x472/000000/000000.png" alt="No dark alternative" width="420"> | <img src="assets/zoom_graph_light.jpeg" alt="Zoom graph light" width="420"> |
+| <img src="https://placehold.co/840x472/000000/000000.png" alt="No dark alternative" width="420"> | <img src="assets/zoom_ligth_graph.jpeg" alt="Zoom light graph" width="420"> |
+
+### Additional visuals
+
+| Dark slot | Light slot |
+|---|---|
+| <img src="https://placehold.co/840x472/000000/000000.png" alt="No dark alternative" width="420"> | <img src="assets/banner.png" alt="Banner" width="420"> |
+| <img src="https://placehold.co/840x472/000000/000000.png" alt="No dark alternative" width="420"> | <img src="assets/okkk.png" alt="Additional screenshot" width="420"> |
+
+---
+
 ## Quick Start
 
 Runtime: **Docker** (recommended) or **Python 3.11+ / Node 18+**.
 
 Full setup guide: [docs/SELF_HOSTING.md](docs/SELF_HOSTING.md)
 
+### One-Line Install (non-technical)
+
+If Docker and Git are already installed, run:
+
+```bash
+curl -fsSL https://zell.kushvinth.com/install.sh | bash
+```
+
+Install page (HTML): [docs/one-line-install.html](docs/one-line-install.html)
+
 ### Option 1: Docker Compose (recommended)
 
 ```bash
-git clone https://github.com/kushvinth/zell
+git clone https://github.com/kushvinth/ZELL
 cd zell
 docker compose up --build
 ```
@@ -66,6 +105,13 @@ Services start at:
 
 - **Frontend**: <http://localhost:3000>
 - **Backend API**: <http://localhost:8000>
+
+Docker files included:
+
+- `docker-compose.yml`
+- `backend/Dockerfile`
+- `frontend/Dockerfile`
+- `scripts/install.sh`
 
 ### Option 2: Local Development
 
@@ -90,98 +136,11 @@ Dev URLs:
 - **Frontend**: <http://localhost:5173>
 - **Backend API**: <http://localhost:8000>
 
----
-
-## How To Use ZELL
-
-### 1. Check system health
-
-```bash
-curl http://localhost:8000/health
-curl http://localhost:8000/api/llm/health
-```
-
-### 2. Bootstrap a world
-
-Generate personas and seed the simulation environment:
-
-```bash
-curl -X POST http://localhost:8000/api/bootstrap \
-  -H "Content-Type: application/json" \
-  -d '{"count": 1200, "with_agents": true}'
-```
-
-### 3. Start a simulation run
-
-Inject a world event and run multiple decision cycles:
-
-```bash
-curl -X POST http://localhost:8000/api/simulation/start \
-  -H "Content-Type: application/json" \
-  -d '{"event": "Global supply shock", "cycles": 3, "year": 2026}'
-```
-
-### 4. Explore results
-
-```bash
-# List all simulation runs
-GET /api/dashboard/runs
-
-# Get agent responses for a specific run
-GET /api/dashboard/runs/{run_id}/responses
-
-# Extract relationship graph
-GET /api/graph/relationships?run_id={run_id}
-
-# Hybrid search across responses
-GET /api/dashboard/search?q=inflation&mode=hybrid
-```
-
----
-
-## Configuration
-
-Minimal `.env` (LLM + defaults):
-
-```env
-LLM_PROVIDER=ollama
-LLM_BASE_URL=http://host.docker.internal:11434
-LLM_MODEL=qwen2.5:1.5b-instruct
-CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
-```
-
 [Full configuration reference (all keys + examples).](docs/SELF_HOSTING.md)
 
-### Key Environment Variables
+## Star History
 
-| Variable | Description | Example |
-|---|---|---|
-| `LLM_PROVIDER` | LLM backend provider | `ollama` |
-| `LLM_BASE_URL` | Base URL for the LLM service | `http://host.docker.internal:11434` |
-| `LLM_MODEL` | Model name to use | `qwen2.5:1.5b-instruct` |
-| `LLM_TIMEOUT` | Request timeout in seconds | `60` |
-| `LLM_MAX_TOKENS` | Max tokens per completion | `1024` |
-| `LLM_TEMPERATURE` | Sampling temperature | `0.7` |
-| `LLM_TOP_P` | Nucleus sampling threshold | `0.9` |
-| `CORS_ORIGINS` | Allowed frontend origins | `http://localhost:5173` |
-| `BOOTSTRAP_PROFILE_COUNT` | Profiles to generate on bootstrap | `1200` |
-| `BOOTSTRAP_AGENT_LIMIT` | Agent cap during bootstrap | `100` |
-| `SEMANTIC_SCAN_MAX_RESPONSES` | Max responses scanned for semantic search | `500` |
-
----
-
-## API Reference
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/health` | Service health check |
-| `GET` | `/api/llm/health` | LLM backend connectivity check |
-| `POST` | `/api/bootstrap` | Generate world data and seed agents |
-| `POST` | `/api/simulation/start` | Start a simulation run |
-| `GET` | `/api/dashboard/runs` | List all simulation runs |
-| `GET` | `/api/dashboard/runs/{run_id}/responses` | Get agent responses for a run |
-| `GET` | `/api/graph/relationships` | Extract relationship graph for a run |
-| `GET` | `/api/dashboard/search` | Hybrid search across responses |
+[![Star History Chart](https://api.star-history.com/svg?repos=kushvinth/ZELL&type=date&legend=top-left)](https://www.star-history.com/#kushvinth/ZELL&type=date&legend=top-left)
 
 ---
 
@@ -230,8 +189,8 @@ CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
 - **Default:** all data stays local; no telemetry, no external calls except your configured LLM endpoint.
 - **CORS:** restrict `CORS_ORIGINS` to your real frontend domain in production.
 - **Storage:** `agents.db` and `agents_data/` should be mounted as persistent volumes and excluded from public access.
-- **Reverse proxy:** always put the backend behind Nginx / Caddy / Traefik before exposing publicly.
-- **LLM traffic:** if using a remote LLM backend, ensure the connection is over a trusted network or VPN.
+- **Reverse proxy:** always put the backend behind a reverse proxy before exposing publicly.
+- **LLM traffic:** If using a remote LLM backend, ensure the connection is over a trusted network or VPN.
 
 Details: [Security policy](SECURITY.md) · [Self-hosting guide](docs/SELF_HOSTING.md)
 
@@ -239,7 +198,7 @@ Details: [Security policy](SECURITY.md) · [Self-hosting guide](docs/SELF_HOSTIN
 
 ## Production notes
 
-- Put the backend behind a reverse proxy (Nginx / Caddy / Traefik).
+- Put the backend behind a reverse proxy.
 - Restrict `CORS_ORIGINS` to your real frontend domain only.
 - Use persistent Docker volumes for `backend/agents_data` and `backend/agents.db`.
 - Pin your LLM model name and set resource limits before running scale tests.
@@ -271,12 +230,6 @@ AI/vibe-coded PRs welcome!
 - Security policy: [SECURITY.md](SECURITY.md)
 - Support guide: [SUPPORT.md](SUPPORT.md)
 - Funding: [.github/FUNDING.yml](.github/FUNDING.yml)
-
----
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=kushvinth/zell&type=date&legend=top-left)](https://www.star-history.com/#kushvinth/zell&type=date&legend=top-left)
 
 ---
 
