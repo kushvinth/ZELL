@@ -1,0 +1,43 @@
+name: Feature request
+description: Propose an improvement to ZELL
+title: "[Feature] "
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Great ideas are welcome. Tell us what outcome you want and why.
+
+  - type: input
+    id: problem
+    attributes:
+      label: Problem statement
+      placeholder: What problem are you trying to solve?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      placeholder: Describe the ideal behavior, endpoint, or UI flow.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      placeholder: What alternatives did you evaluate?
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+      placeholder: Who benefits and how?
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      placeholder: Links, mocks, examples, constraints.

@@ -1,0 +1,48 @@
+name: Frontend Quality
+
+on:
+  push:
+    paths:
+      - "frontend/**"
+      - ".github/workflows/frontend.yml"
+  pull_request:
+    paths:
+      - "frontend/**"
+      - ".github/workflows/frontend.yml"
+
+concurrency:
+  group: frontend-quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint (Oxlint)
+        run: npx --yes oxlint@latest --disable-nested-config src
+
+      - name: Format check (Prettier)
+        run: npx --yes prettier --check .
+
+      - name: Type check (TypeScript)
+        run: npx tsc --noEmit
+
+      - name: Build
+        run: npm run build

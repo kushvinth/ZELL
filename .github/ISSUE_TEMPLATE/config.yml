@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions and usage help
+    url: https://github.com/kushvinth/zell/discussions
+    about: Ask usage questions in Discussions.
+  - name: Security report
+    url: https://github.com/kushvinth/zell/security/advisories/new
+    about: Report vulnerabilities privately.

@@ -1,0 +1,171 @@
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 3%;
+    --card-foreground: 0 0% 100%;
+    --primary: 16 99% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 10%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 85%;
+    --accent: 16 99% 60%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 10%;
+    --input: 0 0% 10%;
+    --ring: 16 99% 60%;
+    --radius: 0.625rem;
+    --popover: 0 0% 3%;
+    --popover-foreground: 0 0% 100%;
+    --chart-1: 16 99% 60%;
+    --chart-2: 0 0% 100%;
+    --chart-3: 160 60% 45%;
+    --chart-4: 280 65% 55%;
+    --chart-5: 340 75% 55%;
+    --sidebar: 0 0% 2%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 16 99% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 7%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 0 0% 10%;
+    --sidebar-ring: 16 99% 60%;
+  }
+
+  .theme {
+    --font-heading: var(--font-sans);
+    --font-sans: "JetBrains Mono", ui-monospace, monospace;
+  }
+
+  .dark {
+    /* Already handled by :root now, but keeping for compatibility in HSL */
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+  }
+
+  .light {
+    --background: 30 25% 97%;
+    --foreground: 220 25% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 25% 12%;
+    --primary: 16 99% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 30 20% 92%;
+    --secondary-foreground: 220 25% 18%;
+    --muted: 30 16% 90%;
+    --muted-foreground: 220 14% 35%;
+    --accent: 16 99% 50%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 74% 52%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 15% 82%;
+    --input: 220 15% 84%;
+    --ring: 16 99% 50%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 25% 12%;
+    --sidebar: 0 0% 98%;
+    --sidebar-foreground: 220 25% 14%;
+    --sidebar-primary: 16 99% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 30 22% 94%;
+    --sidebar-accent-foreground: 220 25% 15%;
+    --sidebar-border: 220 15% 84%;
+    --sidebar-ring: 16 99% 50%;
+  }
+
+  .maplibregl-popup-content {
+    @apply !bg-transparent !shadow-none !p-0 !rounded-none;
+  }
+
+  .maplibregl-popup-tip {
+    @apply !hidden;
+  }
+
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  html {
+    @apply font-sans;
+    font-feature-settings:
+      "liga" 1,
+      "calt" 1;
+  }
+}
+
+* {
+  @apply border-border;
+}
+
+body {
+  @apply bg-background text-foreground;
+}
+
+/*
+  Compatibility adapter for existing hardcoded dark utility classes.
+  This keeps legacy dark-specific class usage readable in light mode.
+*/
+html.light .force-theme-adapt [class*="bg-black"] {
+  background-color: rgb(255 255 255 / 0.82) !important;
+}
+
+html.light .force-theme-adapt [class*="text-white"] {
+  color: rgb(24 33 49 / 0.9) !important;
+}
+
+html.light .force-theme-adapt [class*="border-white"] {
+  border-color: rgb(57 68 86 / 0.2) !important;
+}
+
+html.light .force-theme-adapt [class*="shadow-[0_0_30px_rgba(254,107,54"] {
+  box-shadow: 0 0 16px rgba(254, 107, 54, 0.24) !important;
+}
+
+/* Agent marker animations for mapcn/MapLibre */
+.agent-marker-ping {
+  animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes ping {
+  75%,
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.text-accent {
+  color: #fe6b36;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(250%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 1.5s infinite linear;
+}
+
+samp {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+}

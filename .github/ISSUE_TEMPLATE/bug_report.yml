@@ -1,0 +1,56 @@
+name: Bug report
+description: Report a reproducible problem in ZELL
+title: "[Bug] "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting this. Please provide enough detail to reproduce the issue.
+
+  - type: input
+    id: summary
+    attributes:
+      label: Summary
+      placeholder: What is broken?
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Go to ...
+        2. Run ...
+        3. Observe ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs and screenshots
+      description: Paste logs and add screenshots if useful.
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: macOS 14, Python 3.12, Node 20, Docker Desktop ...
+    validations:
+      required: true
