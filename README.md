@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/kushvinth/zell/actions/workflows/ci.yml?branch=main"><img src="https://img.shields.io/github/actions/workflow/status/kushvinth/zell/ci.yml?branch=main&style=for-the-badge" alt="CI status"></a>
+  <a href="https://github.com/kushvinth/zell/actions/workflows/ci.yml?branch=main"><img src="https://img.shields.io/github/actions/workflow/status/kushvinth/zell/docker-publish.yml?branch=main&style=for-the-badge" alt="CI status"></a>
   <a href="https://github.com/kushvinth/zell/releases"><img src="https://img.shields.io/github/v/release/kushvinth/zell?include_prereleases&style=for-the-badge" alt="GitHub release"></a>
   <a href="https://github.com/kushvinth/zell/blob/main/LICENSE"><img src="https://img.shields.io/github/license/kushvinth/zell?style=for-the-badge" alt="MIT License"></a>
   <a href="https://github.com/kushvinth/zell/issues"><img src="https://img.shields.io/github/issues/kushvinth/zell?style=for-the-badge" alt="Open Issues"></a>
