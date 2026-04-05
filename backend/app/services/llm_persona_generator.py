@@ -4,6 +4,9 @@ via LLM (Ollama) instead of templates. Stores generated markdown files to disk.
 """
 
 import json
+import random
+import threading
+import os
 from pathlib import Path
 from typing import Optional, Dict, Any
 from app.services.llm import get_llm
@@ -12,8 +15,17 @@ import logging
 logger = logging.getLogger(__name__)
 
 # Storage location for generated agent markdown files
-AGENTS_DATA_DIR = Path("agents_data")
+AGENTS_DATA_DIR = Path(os.getenv("ZELL_AGENTS_DATA_DIR", "agents_data"))
 AGENTS_DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+PERSONA_SECTION_NAMES = (
+    "SOUL",
+    "IDENTITY",
+    "VOICE",
+    "BRAIN",
+    "WORK",
+    "DRIVES",
+)
 
 
 class LLMPersonaGenerator:
@@ -278,6 +290,62 @@ Format as markdown. Make it emotionally grounded.{context}""",
 
 
 _USED_CORPUS_DIRS = set()
+_CORPUS_POOL: Optional[list[Path]] = None
+_CORPUS_POOL_LOCK = threading.Lock()
+
+
+def reset_corpus_cache() -> None:
+    """
+    Reset in-memory corpus state.
+
+    Call this at the start of each bootstrap/batch run so directory scan
+    happens once per run instead of once per agent.
+    """
+    global _CORPUS_POOL
+    with _CORPUS_POOL_LOCK:
+        _USED_CORPUS_DIRS.clear()
+        _CORPUS_POOL = None
+
+
+def _build_corpus_pool() -> list[Path]:
+    """Scan agents_data once and build eligible cached persona sources."""
+    if not AGENTS_DATA_DIR.exists():
+        return []
+
+    pool = [
+        d
+        for d in AGENTS_DATA_DIR.iterdir()
+        if d.is_dir()
+        and all((d / f"{section}.md").exists() for section in PERSONA_SECTION_NAMES)
+    ]
+    random.shuffle(pool)
+    return pool
+
+
+def _take_corpus_source(agent_id: str) -> Optional[Path]:
+    """Pop one eligible corpus source from the in-memory pool."""
+    global _CORPUS_POOL
+
+    with _CORPUS_POOL_LOCK:
+        if _CORPUS_POOL is None:
+            _CORPUS_POOL = _build_corpus_pool()
+            logger.info(
+                f"Corpus pool initialized with {len(_CORPUS_POOL)} cached agents"
+            )
+
+        while _CORPUS_POOL:
+            candidate = _CORPUS_POOL.pop()
+            if candidate.name == agent_id:
+                continue
+            if candidate.name in _USED_CORPUS_DIRS:
+                continue
+
+            _USED_CORPUS_DIRS.add(candidate.name)
+            _USED_CORPUS_DIRS.add(agent_id)
+            return candidate
+
+        _USED_CORPUS_DIRS.add(agent_id)
+        return None
 
 
 def generate_and_save_persona(
@@ -301,60 +369,41 @@ def generate_and_save_persona(
 
     # Attempt to pull from existing corpus to save massive amounts of LLM time
     try:
-        import random
+        chosen_corpus = _take_corpus_source(agent_id)
 
-        # Find all directories in agents_data that contain at least a SOUL.md
-        corpus_dirs = [
-            d
-            for d in AGENTS_DATA_DIR.iterdir()
-            if d.is_dir()
-            and d.name != agent_id
-            and d.name not in _USED_CORPUS_DIRS
-            and (d / "SOUL.md").exists()
-            and (d / "DRIVES.md").exists()
-        ]
-
-        # If we have any unused people in the corpus, draw one
-        if corpus_dirs:
-            chosen_corpus = random.choice(corpus_dirs)
-
-            # Mark the source and the new destination as used, so we don't recycle them this run
-            _USED_CORPUS_DIRS.add(chosen_corpus.name)
-            _USED_CORPUS_DIRS.add(agent_id)
-
-            logger.info(
-                f"Retrieving cached from {chosen_corpus.name}. Unused corpus remaining: {len(corpus_dirs) - 1}"
-            )
+        # Keep trying corpus candidates before falling back to LLM.
+        while chosen_corpus is not None:
+            logger.info(f"Retrieving cached from {chosen_corpus.name}")
 
             sections = {}
-            for section_name in [
-                "SOUL",
-                "IDENTITY",
-                "VOICE",
-                "BRAIN",
-                "WORK",
-                "DRIVES",
-            ]:
+            for section_name in PERSONA_SECTION_NAMES:
                 file_path = chosen_corpus / f"{section_name}.md"
                 if file_path.exists():
                     with open(file_path, "r") as f:
                         sections[section_name] = f.read()
 
-            if len(sections) == 6:
+            if len(sections) == len(PERSONA_SECTION_NAMES):
                 # Save it to the new agent's slot
                 LLMPersonaGenerator.save_persona_files(
                     agent_id, sections, agent_metadata
                 )
                 return sections
-        else:
+
+            logger.warning(
+                f"Corpus source {chosen_corpus.name} missing required sections; trying another source"
+            )
+            chosen_corpus = _take_corpus_source(agent_id)
+
+        if chosen_corpus is None:
             logger.info("No unused agents left in corpus. Generating via Ollama...")
     except Exception as e:
         logger.warning(f"Failed to use corpus cache: {e}")
 
     # Fallback to generating via LLM
-    _USED_CORPUS_DIRS.add(
-        agent_id
-    )  # Also don't reuse the newly generated one during this batch
+    with _CORPUS_POOL_LOCK:
+        _USED_CORPUS_DIRS.add(
+            agent_id
+        )  # Also don't reuse the newly generated one during this batch
     sections = LLMPersonaGenerator.generate_full_persona(agent_metadata)
 
     # Save to disk

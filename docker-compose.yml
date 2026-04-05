@@ -1,0 +1,37 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      ZELL_DB_PATH: /app/data/agents.db
+      ZELL_AGENTS_DATA_DIR: /app/agents_data
+      CORS_ORIGINS: http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173
+    volumes:
+      - backend_data:/app/data
+      - backend_agents_data:/app/agents_data
+    ports:
+      - "8000:8000"
+    networks:
+      - zell-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+    networks:
+      - zell-network
+
+volumes:
+  backend_data:
+  backend_agents_data:
+
+networks:
+  zell-network:
+    driver: bridge
