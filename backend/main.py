@@ -735,6 +735,51 @@ def get_llm_health() -> dict[str, Any]:
     return {**health, "timestamp": datetime.now().isoformat()}
 
 
+@app.get("/api/llm/models")
+def get_llm_models() -> dict[str, Any]:
+    """List available models from Ollama for UI selection."""
+    try:
+        llm = get_llm()
+        payload = llm.list_models()
+        models = payload.get("models", [])
+        return {
+            **payload,
+            "count": len(models),
+            "timestamp": datetime.now().isoformat(),
+        }
+    except RuntimeError as e:
+        raise HTTPException(status_code=503, detail=str(e)) from e
+    except Exception as e:
+        logger.error(f"Failed to fetch LLM models: {e}")
+        raise HTTPException(status_code=500, detail=str(e)) from e
+
+
+@app.post("/api/llm/model")
+def set_llm_model(request: Optional[dict[str, Any]] = None) -> dict[str, Any]:
+    """Switch the active runtime model used by Ollama-backed generations."""
+    request_data = request or {}
+    requested_model = str(request_data.get("model", "")).strip()
+    if not requested_model:
+        raise HTTPException(status_code=400, detail="Request body must include 'model'")
+
+    try:
+        llm = get_llm()
+        selected = llm.set_model(requested_model)
+        return {
+            "status": "updated",
+            "provider": llm.config.provider,
+            "model": selected,
+            "timestamp": datetime.now().isoformat(),
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
+    except RuntimeError as e:
+        raise HTTPException(status_code=503, detail=str(e)) from e
+    except Exception as e:
+        logger.error(f"Failed to set LLM model: {e}")
+        raise HTTPException(status_code=500, detail=str(e)) from e
+
+
 @app.get("/api/system/stats")
 def get_system_stats() -> dict[str, Any]:
     """Get real-time system performance data."""

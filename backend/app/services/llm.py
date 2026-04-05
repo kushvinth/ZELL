@@ -95,6 +95,47 @@ class OllamaClient:
             logger.error(f"Model pull error: {e}")
             return False
 
+    def list_models(self) -> list[Dict[str, Any]]:
+        """List models installed in Ollama."""
+        try:
+            response = requests.get(
+                f"{self.base_url}/api/tags",
+                timeout=10,
+            )
+            if response.status_code != 200:
+                raise RuntimeError(
+                    f"Ollama model listing failed with status {response.status_code}"
+                )
+
+            payload = response.json()
+            raw_models = payload.get("models", []) or []
+
+            models: list[Dict[str, Any]] = []
+            seen: set[str] = set()
+            for item in raw_models:
+                name = (item.get("name") or item.get("model") or "").strip()
+                if not name or name in seen:
+                    continue
+                seen.add(name)
+                models.append(
+                    {
+                        "name": name,
+                        "size_bytes": item.get("size"),
+                        "modified_at": item.get("modified_at"),
+                        "digest": item.get("digest"),
+                    }
+                )
+
+            return models
+        except Exception as e:
+            logger.error(f"Failed to list Ollama models: {e}")
+            raise RuntimeError(f"Unable to fetch Ollama models: {e}") from e
+
+    def set_model(self, name: str) -> None:
+        """Switch active runtime model for generation calls."""
+        self.model = name
+        self.config.model = name
+
     def generate(
         self,
         system_prompt: str,
@@ -325,6 +366,58 @@ class LLMService:
             "provider": self.config.provider,
             "model": self.config.model,
         }
+
+    def list_models(self) -> Dict[str, Any]:
+        """Return available models for the active provider."""
+        if LLMService._client is None:
+            raise RuntimeError("LLM client is not initialized")
+
+        if self.config.provider != "ollama" or not isinstance(
+            LLMService._client, OllamaClient
+        ):
+            return {
+                "provider": self.config.provider,
+                "current_model": self.config.model,
+                "models": [],
+                "error": "Model listing is only available for Ollama provider",
+            }
+
+        models = LLMService._client.list_models()
+        return {
+            "provider": self.config.provider,
+            "current_model": self.config.model,
+            "models": models,
+        }
+
+    def set_model(self, model: str) -> str:
+        """Set active runtime model for Ollama provider."""
+        if LLMService._client is None:
+            raise RuntimeError("LLM client is not initialized")
+
+        if self.config.provider != "ollama" or not isinstance(
+            LLMService._client, OllamaClient
+        ):
+            raise RuntimeError(
+                "Runtime model switching is only available for Ollama provider"
+            )
+
+        requested_model = model.strip()
+        if not requested_model:
+            raise ValueError("Model name cannot be empty")
+
+        available_models = {
+            item.get("name")
+            for item in LLMService._client.list_models()
+            if item.get("name")
+        }
+        if requested_model not in available_models:
+            raise ValueError(f"Model '{requested_model}' is not installed in Ollama")
+
+        previous_model = self.config.model
+        LLMService._client.set_model(requested_model)
+        self.config.model = requested_model
+        logger.info(f"Switched active LLM model: {previous_model} -> {requested_model}")
+        return requested_model
 
 
 def init_llm(config: Optional[LLMConfig] = None) -> LLMService:

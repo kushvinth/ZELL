@@ -26,6 +26,51 @@ export async function fetchLLMHealth(): Promise<Record<string, unknown>> {
   return res.json();
 }
 
+export interface LLMModelOption {
+  name: string;
+  size_bytes?: number;
+  modified_at?: string;
+  digest?: string;
+}
+
+export interface LLMModelsResponse {
+  provider: string;
+  current_model: string;
+  models: LLMModelOption[];
+  count: number;
+  timestamp: string;
+  error?: string;
+}
+
+export interface SetLLMModelResponse {
+  status: string;
+  provider: string;
+  model: string;
+  timestamp: string;
+}
+
+export async function fetchLLMModels(): Promise<LLMModelsResponse> {
+  const res = await fetch(`${API_BASE}/api/llm/models`);
+  if (!res.ok) {
+    const message = await res.text();
+    throw new Error(`LLM models fetch failed: ${res.status} ${message}`);
+  }
+  return res.json();
+}
+
+export async function setLLMModel(model: string): Promise<SetLLMModelResponse> {
+  const res = await fetch(`${API_BASE}/api/llm/model`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ model }),
+  });
+  if (!res.ok) {
+    const message = await res.text();
+    throw new Error(`LLM model update failed: ${res.status} ${message}`);
+  }
+  return res.json();
+}
+
 export async function fetchSystemStats(): Promise<any> {
   const res = await fetch(`${API_BASE}/api/system/stats`);
   if (!res.ok) throw new Error(`System stats failed: ${res.statusText}`);
