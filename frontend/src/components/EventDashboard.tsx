@@ -466,75 +466,66 @@ function EvolutionTimeline({
         <TrendingUp className="w-3 h-3 inline mr-1" /> Event Evolution —{" "}
         {cycles.length} {cycleWord}
       </h3>
-      <div className="space-y-4">
-        {cycles.map((c, i) => {
-          const migPct =
-            totalAgents > 0 ? (c.migrating_count / totalAgents) * 100 : 0;
-          const trustDropPct =
-            totalAgents > 0 ? (c.less_trusting_count / totalAgents) * 100 : 0;
-          const topEmotions = Object.entries(c.emotion_breakdown ?? {}).slice(
-            0,
-            3,
-          );
+      <div className="overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="flex gap-3 min-w-max">
+          {cycles.map((c) => {
+            const migPct =
+              totalAgents > 0 ? (c.migrating_count / totalAgents) * 100 : 0;
+            const trustDropPct =
+              totalAgents > 0 ? (c.less_trusting_count / totalAgents) * 100 : 0;
+            const topEmotions = Object.entries(c.emotion_breakdown ?? {}).slice(
+              0,
+              3,
+            );
 
-          return (
-            <div
-              key={c.cycle}
-              className="grid grid-cols-[2rem,1fr] gap-3 items-start"
-            >
-              {/* Cycle marker */}
-              <div className="flex flex-col items-center shrink-0">
-                <div
-                  className="w-7 h-7 rounded-full border-2 flex items-center justify-center text-[10px] font-black"
-                  style={{
-                    borderColor: i === 0 ? "#FE6B36" : "#ffffff30",
-                    color: i === 0 ? "#FE6B36" : "#6b7280",
-                    backgroundColor: i === 0 ? "#FE6B36/10" : "transparent",
-                  }}
-                >
-                  {c.cycle}
-                </div>
-                {i < cycles.length - 1 && (
-                  <div className="w-px h-8 bg-white/10 mt-1" />
-                )}
-              </div>
-
-              {/* Cycle data */}
-              <div className="min-w-0 bg-white/[0.03] rounded-xl border border-white/5 p-3 space-y-3">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between gap-2">
+            return (
+              <div
+                key={c.cycle}
+                className="w-[18rem] shrink-0 bg-white/[0.03] rounded-xl border border-white/10 p-3 space-y-3"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <div
+                      className="w-7 h-7 rounded-full border-2 flex items-center justify-center text-[10px] font-black"
+                      style={{
+                        borderColor: "#FE6B36",
+                        color: "#FE6B36",
+                        backgroundColor: "#FE6B361A",
+                      }}
+                    >
+                      {c.cycle}
+                    </div>
                     <p className="text-[10px] font-bold text-white/60 uppercase tracking-widest whitespace-nowrap">
                       Cycle {c.cycle}
                     </p>
-                    <span className="text-[9px] text-white/45 font-mono whitespace-nowrap shrink-0">
-                      {c.agent_count} agents
-                    </span>
                   </div>
-                  <div className="grid grid-cols-1 gap-1.5 text-[9px] font-mono leading-tight">
-                    {c.migrating_count > 0 && (
-                      <div
-                        className="text-purple-400 truncate"
-                        title={`${
-                          c.migrating_count
-                        } migrating (${migPct.toFixed(0)}%)`}
-                      >
-                        <Plane className="w-2 h-2 inline mr-1.5" />
-                        {c.migrating_count} migrating ({migPct.toFixed(0)}%)
-                      </div>
-                    )}
-                    {c.less_trusting_count > 0 && (
-                      <div
-                        className="text-red-400 truncate"
-                        title={`${
-                          c.less_trusting_count
-                        } trust decrease (${trustDropPct.toFixed(0)}%)`}
-                      >
-                        <AlertTriangle className="w-2 h-2 inline mr-1.5" />
-                        {c.less_trusting_count} trust↓ (
-                        {trustDropPct.toFixed(0)}%)
-                      </div>
-                    )}
-                  </div>
+                  <span className="text-[9px] text-white/45 font-mono whitespace-nowrap shrink-0">
+                    {c.agent_count} agents
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 gap-1.5 text-[9px] font-mono leading-tight">
+                  {c.migrating_count > 0 && (
+                    <div
+                      className="text-purple-400 truncate"
+                      title={`${c.migrating_count} migrating (${migPct.toFixed(0)}%)`}
+                    >
+                      <Plane className="w-2 h-2 inline mr-1.5" />
+                      {c.migrating_count} migrating ({migPct.toFixed(0)}%)
+                    </div>
+                  )}
+                  {c.less_trusting_count > 0 && (
+                    <div
+                      className="text-red-400 truncate"
+                      title={`${
+                        c.less_trusting_count
+                      } trust decrease (${trustDropPct.toFixed(0)}%)`}
+                    >
+                      <AlertTriangle className="w-2 h-2 inline mr-1.5" />
+                      {c.less_trusting_count} trust drop (
+                      {trustDropPct.toFixed(0)}%)
+                    </div>
+                  )}
                 </div>
 
                 {/* Emotion bars */}
@@ -573,9 +564,9 @@ function EvolutionTimeline({
                   </div>
                 )}
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     </div>
   );
@@ -790,9 +781,9 @@ export function EventDashboard({ onClose }: EventDashboardProps) {
 
         {/* ── Main Content ── */}
         {selectedRun ? (
-          <div className="flex-1 flex flex-col overflow-hidden">
+          <div className="flex-1 min-h-0 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#FE6B36]/80 [&::-webkit-scrollbar-thumb]:rounded-full">
             {/* Run header */}
-            <div className="px-6 py-4 border-b border-white/[0.07] bg-black/20 shrink-0">
+            <div className="px-6 py-4 border-b border-white/[0.07] bg-black/20">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-lg font-black text-white">
@@ -816,229 +807,229 @@ export function EventDashboard({ onClose }: EventDashboardProps) {
                 </span>
               </div>
 
-              {/* Search + Filters + Layout Toggle */}
-              <div className="mt-4 flex gap-3 flex-wrap items-center">
-                {/* Search input */}
-                <div className="flex-1 min-w-[200px] relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 flex items-center justify-center">
-                    <Search className="w-3.5 h-3.5" />
-                  </span>
-                  <input
-                    type="text"
-                    placeholder="Search responses... (e.g. 'afraid', 'flee', 'bomb')"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-8 pr-4 py-2 bg-white/[0.04] border border-white/10 focus:border-[#FE6B36]/50 rounded-lg text-[11px] text-white placeholder:text-white/25 outline-none transition-colors"
+              {evolution.length > 0 && (
+                <div className="mt-4">
+                  <EvolutionTimeline
+                    cycles={evolution}
+                    totalAgents={selectedRun.agent_count}
                   />
                 </div>
+              )}
 
-                {/* Search mode */}
-                <div className="flex rounded-lg overflow-hidden border border-white/10">
-                  {(["hybrid", "semantic", "fuzzy"] as const).map((m) => (
+              <div className="sticky top-0 z-20 mt-4 -mx-6 px-6 py-3 bg-black/90 backdrop-blur-md border-y border-white/[0.07]">
+                {/* Search + Filters + Layout Toggle */}
+                <div className="flex gap-3 flex-wrap items-center">
+                  {/* Search input */}
+                  <div className="flex-1 min-w-[200px] relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 flex items-center justify-center">
+                      <Search className="w-3.5 h-3.5" />
+                    </span>
+                    <input
+                      type="text"
+                      placeholder="Search responses... (e.g. 'afraid', 'flee', 'bomb')"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full pl-8 pr-4 py-2 bg-white/[0.04] border border-white/10 focus:border-[#FE6B36]/50 rounded-lg text-[11px] text-white placeholder:text-white/25 outline-none transition-colors"
+                    />
+                  </div>
+
+                  {/* Search mode */}
+                  <div className="flex rounded-lg overflow-hidden border border-white/10">
+                    {(["hybrid", "semantic", "fuzzy"] as const).map((m) => (
+                      <button
+                        key={m}
+                        onClick={() => setSearchMode(m)}
+                        className={`px-3 py-2 text-[9px] uppercase tracking-widest transition-colors ${
+                          searchMode === m
+                            ? "bg-[#FE6B36] text-white"
+                            : "text-white/40 hover:text-white hover:bg-white/5"
+                        }`}
+                      >
+                        {m}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Layout Mode Toggle */}
+                  <div className="flex rounded-lg overflow-hidden border border-white/10">
                     <button
-                      key={m}
-                      onClick={() => setSearchMode(m)}
-                      className={`px-3 py-2 text-[9px] uppercase tracking-widest transition-colors ${
-                        searchMode === m
+                      onClick={() => setLayoutMode("default")}
+                      className={`px-3 py-2 text-[9px] uppercase tracking-widest transition-colors flex items-center gap-1 ${
+                        layoutMode === "default"
                           ? "bg-[#FE6B36] text-white"
                           : "text-white/40 hover:text-white hover:bg-white/5"
                       }`}
+                      title="Default layout"
                     >
-                      {m}
+                      ◻◻ Default
                     </button>
-                  ))}
+                    <button
+                      onClick={() => setLayoutMode("compact")}
+                      className={`px-3 py-2 text-[9px] uppercase tracking-widest transition-colors flex items-center gap-1 border-l ${
+                        layoutMode === "compact"
+                          ? "bg-[#FE6B36] text-white border-l-[#FE6B36]"
+                          : "text-white/40 border-l-white/10 hover:text-white hover:bg-white/5"
+                      }`}
+                      title="Compact grid layout"
+                    >
+                      <Grid3x3 className="w-3 h-3" /> Compact
+                    </button>
+                    <button
+                      onClick={() => setLayoutMode("vertical")}
+                      className={`px-3 py-2 text-[9px] uppercase tracking-widest transition-colors flex items-center gap-1 border-l ${
+                        layoutMode === "vertical"
+                          ? "bg-[#FE6B36] text-white border-l-[#FE6B36]"
+                          : "text-white/40 border-l-white/10 hover:text-white hover:bg-white/5"
+                      }`}
+                      title="Vertical layout"
+                    >
+                      <Columns className="w-3 h-3" /> Vertical
+                    </button>
+                  </div>
                 </div>
 
-                {/* Layout Mode Toggle */}
-                <div className="flex rounded-lg overflow-hidden border border-white/10">
-                  <button
-                    onClick={() => setLayoutMode("default")}
-                    className={`px-3 py-2 text-[9px] uppercase tracking-widest transition-colors flex items-center gap-1 ${
-                      layoutMode === "default"
-                        ? "bg-[#FE6B36] text-white"
-                        : "text-white/40 hover:text-white hover:bg-white/5"
-                    }`}
-                    title="Default layout"
+                {/* Cycle filter + other filters - next line with top spacing */}
+                <div className="flex gap-3 flex-wrap mt-3">
+                  {/* Cycle filter */}
+                  <select
+                    value={filterCycle ?? ""}
+                    onChange={(e) =>
+                      setFilterCycle(
+                        e.target.value ? Number(e.target.value) : null,
+                      )
+                    }
+                    className="px-3 py-2 bg-white/[0.04] border border-white/10 rounded-lg text-[11px] text-white/60 outline-none"
                   >
-                    ◻◻ Default
+                    <option value="">All Cycles</option>
+                    {Array.from(
+                      { length: selectedRun.cycles },
+                      (_, i) => i + 1,
+                    ).map((c) => (
+                      <option key={c} value={c}>
+                        Cycle {c}
+                      </option>
+                    ))}
+                  </select>
+
+                  {/* Migrating filter */}
+                  <button
+                    onClick={() => setMigratingOnly((p) => !p)}
+                    className={`px-3 py-2 rounded-lg text-[9px] uppercase tracking-widest border transition-colors flex items-center ${
+                      migratingOnly
+                        ? "bg-purple-500/20 border-purple-500/50 text-purple-400"
+                        : "border-white/10 text-white/40 hover:border-white/20"
+                    }`}
+                  >
+                    <Plane className="w-3 h-3 mr-1.5" /> Migrating Only
                   </button>
+
                   <button
-                    onClick={() => setLayoutMode("compact")}
-                    className={`px-3 py-2 text-[9px] uppercase tracking-widest transition-colors flex items-center gap-1 border-l ${
-                      layoutMode === "compact"
-                        ? "bg-[#FE6B36] text-white border-l-[#FE6B36]"
-                        : "text-white/40 border-l-white/10 hover:text-white hover:bg-white/5"
+                    onClick={() => setLessTrustingOnly((p) => !p)}
+                    className={`px-3 py-2 rounded-lg text-[9px] uppercase tracking-widest border transition-colors flex items-center ${
+                      lessTrustingOnly
+                        ? "bg-red-500/20 border-red-500/50 text-red-400"
+                        : "border-white/10 text-white/40 hover:border-white/20"
                     }`}
-                    title="Compact grid layout"
                   >
-                    <Grid3x3 className="w-3 h-3" /> Compact
-                  </button>
-                  <button
-                    onClick={() => setLayoutMode("vertical")}
-                    className={`px-3 py-2 text-[9px] uppercase tracking-widest transition-colors flex items-center gap-1 border-l ${
-                      layoutMode === "vertical"
-                        ? "bg-[#FE6B36] text-white border-l-[#FE6B36]"
-                        : "text-white/40 border-l-white/10 hover:text-white hover:bg-white/5"
-                    }`}
-                    title="Vertical layout"
-                  >
-                    <Columns className="w-3 h-3" /> Vertical
+                    <AlertTriangle className="w-3 h-3 mr-1.5" /> Trust Drop Only
                   </button>
                 </div>
-              </div>
 
-              {/* Cycle filter + other filters - next line with top spacing */}
-              <div className="flex gap-3 flex-wrap mt-3">
-                {/* Cycle filter */}
-                <select
-                  value={filterCycle ?? ""}
-                  onChange={(e) =>
-                    setFilterCycle(
-                      e.target.value ? Number(e.target.value) : null,
-                    )
-                  }
-                  className="px-3 py-2 bg-white/[0.04] border border-white/10 rounded-lg text-[11px] text-white/60 outline-none"
-                >
-                  <option value="">All Cycles</option>
-                  {Array.from(
-                    { length: selectedRun.cycles },
-                    (_, i) => i + 1,
-                  ).map((c) => (
-                    <option key={c} value={c}>
-                      Cycle {c}
-                    </option>
-                  ))}
-                </select>
-
-                {/* Migrating filter */}
-                <button
-                  onClick={() => setMigratingOnly((p) => !p)}
-                  className={`px-3 py-2 rounded-lg text-[9px] uppercase tracking-widest border transition-colors flex items-center ${
-                    migratingOnly
-                      ? "bg-purple-500/20 border-purple-500/50 text-purple-400"
-                      : "border-white/10 text-white/40 hover:border-white/20"
-                  }`}
-                >
-                  <Plane className="w-3 h-3 mr-1.5" /> Migrating Only
-                </button>
-
-                <button
-                  onClick={() => setLessTrustingOnly((p) => !p)}
-                  className={`px-3 py-2 rounded-lg text-[9px] uppercase tracking-widest border transition-colors flex items-center ${
-                    lessTrustingOnly
-                      ? "bg-red-500/20 border-red-500/50 text-red-400"
-                      : "border-white/10 text-white/40 hover:border-white/20"
-                  }`}
-                >
-                  <AlertTriangle className="w-3 h-3 mr-1.5" /> Trust Drop Only
-                </button>
-              </div>
-
-              {/* Result count */}
-              {!loadingResponses && (
-                <p className="text-[9px] text-white/25 mt-2">
-                  {searchQuery
-                    ? `${totalResponses} results for "${searchQuery}" · `
-                    : `${totalResponses} responses · `}
-                  Page {page} of {totalPages}
-                </p>
-              )}
-            </div>
-
-            {/* ── Content Columns ── */}
-            <div className="flex-1 flex overflow-hidden">
-              {/* Response Feed */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-3 pr-2 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#FE6B36]/80 [&::-webkit-scrollbar-thumb]:rounded-full">
-                {loadingResponses ? (
-                  <div className="flex items-center justify-center h-32">
-                    <div className="w-5 h-5 border-2 border-[#FE6B36] border-t-transparent rounded-full animate-spin" />
-                  </div>
-                ) : responses.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center h-32 gap-2">
-                    <p className="text-[10px] text-white/30">
-                      No responses found
-                    </p>
-                    {searchQuery && (
-                      <button
-                        onClick={() => setSearchQuery("")}
-                        className="text-[9px] text-[#FE6B36]/60 hover:text-[#FE6B36] underline"
-                      >
-                        Clear search
-                      </button>
-                    )}
-                  </div>
-                ) : (
-                  <>
-                    {/* Render grid based on layout mode */}
-                    {layoutMode === "default" && (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        {responses.map((r) => (
-                          <ResponseCard
-                            key={r.id}
-                            r={r}
-                            onClick={() => setSelectedResponse(r)}
-                          />
-                        ))}
-                      </div>
-                    )}
-
-                    {layoutMode === "compact" && (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                        {responses.map((r) => (
-                          <ResponseCardCompact
-                            key={r.id}
-                            r={r}
-                            onClick={() => setSelectedResponse(r)}
-                          />
-                        ))}
-                      </div>
-                    )}
-
-                    {layoutMode === "vertical" && (
-                      <div className="grid grid-cols-1 gap-3">
-                        {responses.map((r) => (
-                          <ResponseCardVertical
-                            key={r.id}
-                            r={r}
-                            onClick={() => setSelectedResponse(r)}
-                          />
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Pagination */}
-                    {totalPages > 1 && (
-                      <div className="flex items-center justify-center gap-3 pt-4">
-                        <button
-                          disabled={page <= 1}
-                          onClick={() => loadResponses(page - 1)}
-                          className="px-4 py-2 text-[10px] border border-white/10 rounded-lg text-white/40 hover:text-white hover:border-white/30 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                        >
-                          ← Prev
-                        </button>
-                        <span className="text-[10px] text-white/40 font-mono">
-                          {page} / {totalPages}
-                        </span>
-                        <button
-                          disabled={page >= totalPages}
-                          onClick={() => loadResponses(page + 1)}
-                          className="px-4 py-2 text-[10px] border border-white/10 rounded-lg text-white/40 hover:text-white hover:border-white/30 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                        >
-                          Next →
-                        </button>
-                      </div>
-                    )}
-                  </>
+                {/* Result count */}
+                {!loadingResponses && (
+                  <p className="text-[9px] text-white/25 mt-2">
+                    {searchQuery
+                      ? `${totalResponses} results for "${searchQuery}" · `
+                      : `${totalResponses} responses · `}
+                    Page {page} of {totalPages}
+                  </p>
                 )}
               </div>
+            </div>
 
-              {/* Evolution Sidebar */}
-              <div className="w-64 xl:w-80 border-l border-white/[0.07] overflow-y-auto p-4 shrink-0 hidden lg:block">
-                <EvolutionTimeline
-                  cycles={evolution}
-                  totalAgents={selectedRun.agent_count}
-                />
-              </div>
+            {/* ── Content Area ── */}
+            <div className="p-4 space-y-3">
+              {loadingResponses ? (
+                <div className="flex items-center justify-center h-32">
+                  <div className="w-5 h-5 border-2 border-[#FE6B36] border-t-transparent rounded-full animate-spin" />
+                </div>
+              ) : responses.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-32 gap-2">
+                  <p className="text-[10px] text-white/30">
+                    No responses found
+                  </p>
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery("")}
+                      className="text-[9px] text-[#FE6B36]/60 hover:text-[#FE6B36] underline"
+                    >
+                      Clear search
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <>
+                  {/* Render grid based on layout mode */}
+                  {layoutMode === "default" && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {responses.map((r) => (
+                        <ResponseCard
+                          key={r.id}
+                          r={r}
+                          onClick={() => setSelectedResponse(r)}
+                        />
+                      ))}
+                    </div>
+                  )}
+
+                  {layoutMode === "compact" && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                      {responses.map((r) => (
+                        <ResponseCardCompact
+                          key={r.id}
+                          r={r}
+                          onClick={() => setSelectedResponse(r)}
+                        />
+                      ))}
+                    </div>
+                  )}
+
+                  {layoutMode === "vertical" && (
+                    <div className="grid grid-cols-1 gap-3">
+                      {responses.map((r) => (
+                        <ResponseCardVertical
+                          key={r.id}
+                          r={r}
+                          onClick={() => setSelectedResponse(r)}
+                        />
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Pagination */}
+                  {totalPages > 1 && (
+                    <div className="flex items-center justify-center gap-3 pt-4">
+                      <button
+                        disabled={page <= 1}
+                        onClick={() => loadResponses(page - 1)}
+                        className="px-4 py-2 text-[10px] border border-white/10 rounded-lg text-white/40 hover:text-white hover:border-white/30 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                      >
+                        ← Prev
+                      </button>
+                      <span className="text-[10px] text-white/40 font-mono">
+                        {page} / {totalPages}
+                      </span>
+                      <button
+                        disabled={page >= totalPages}
+                        onClick={() => loadResponses(page + 1)}
+                        className="px-4 py-2 text-[10px] border border-white/10 rounded-lg text-white/40 hover:text-white hover:border-white/30 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                      >
+                        Next →
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           </div>
         ) : (

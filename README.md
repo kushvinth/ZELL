@@ -37,12 +37,43 @@ If you want open-control-room energy with full data ownership, this is it.
 
 ## Core Capabilities
 
-- **[Agent Bootstrap](#how-to-use-zell)**: generate rich personas and seed a synthetic world with a single API call.
-- **[Simulation Orchestration](#how-to-use-zell)**: run multi-cycle scenarios with configurable events and time horizons.
-- **[Decision Persistence](#how-to-use-zell)**: every agent decision is stored and queryable across simulation runs.
-- **[Semantic + Fuzzy Search](#how-to-use-zell)**: hybrid search across all agent responses and run histories.
-- **[Graph Relationship Extraction](#how-to-use-zell)**: visualize agent connections in the workbench and atlas views.
-- **[API-first Architecture](#api-reference)**: build custom frontends or integrate with your existing tooling.
+- **Agent Bootstrap**: generate rich personas and seed a synthetic world with a single API call.
+- **Simulation Orchestration**: run multi-cycle scenarios with configurable events and time horizons.
+- **Decision Persistence**: every agent decision is stored and queryable across simulation runs.
+- **Semantic + Fuzzy Search**: hybrid search across all agent responses and run histories.
+- **Graph Relationship Extraction**: visualize agent connections in the workbench and atlas views.
+- **API-first Architecture**: build custom frontends or integrate with your existing tooling.
+
+---
+
+## Asset Gallery
+
+### GIFs
+
+| GIF 1 | GIF 2 |
+|---|---|
+| <img src="assets/CleanShot%202026-04-04%20at%2017.57.57.gif" alt="CleanShot demo" width="420"> | <img src="assets/no.gif" alt="Motion preview" width="420"> |
+
+### Dark UI vs Light UI
+
+| Dark UI | Light UI |
+|---|---|
+| <img src="assets/dark_dashboard.png" alt="Dark dashboard" width="420"> | <img src="assets/light_dashboard.png" alt="Light dashboard" width="420"> |
+| <img src="assets/dark_npc_dashboard.png" alt="Dark NPC dashboard" width="420"> | <img src="assets/light%20npc.png" alt="Light NPC panel" width="420"> |
+| <img src="assets/dark_map.jpeg" alt="Dark map" width="420"> | <img src="assets/light_map.jpeg" alt="Light map" width="420"> |
+| <img src="assets/dark_graph.jpeg" alt="Dark graph" width="420"> | <img src="assets/light_graph.jpeg" alt="Light graph" width="420"> |
+| <img src="assets/dark_dashboard1.png" alt="Dark dashboard detail" width="420"> | <img src="https://placehold.co/840x472/000000/000000.png" alt="No light alternative" width="420"> |
+| <img src="https://placehold.co/840x472/000000/000000.png" alt="No dark alternative" width="420"> | <img src="assets/light_graph__.jpeg" alt="Light graph alternate" width="420"> |
+| <img src="https://placehold.co/840x472/000000/000000.png" alt="No dark alternative" width="420"> | <img src="assets/light_wb.png" alt="Light workbench" width="420"> |
+| <img src="https://placehold.co/840x472/000000/000000.png" alt="No dark alternative" width="420"> | <img src="assets/zoom_graph_light.jpeg" alt="Zoom graph light" width="420"> |
+| <img src="https://placehold.co/840x472/000000/000000.png" alt="No dark alternative" width="420"> | <img src="assets/zoom_ligth_graph.jpeg" alt="Zoom light graph" width="420"> |
+
+### Additional visuals
+
+| Dark slot | Light slot |
+|---|---|
+| <img src="https://placehold.co/840x472/000000/000000.png" alt="No dark alternative" width="420"> | <img src="assets/banner.png" alt="Banner" width="420"> |
+| <img src="https://placehold.co/840x472/000000/000000.png" alt="No dark alternative" width="420"> | <img src="assets/okkk.png" alt="Additional screenshot" width="420"> |
 
 ---
 
@@ -51,6 +82,16 @@ If you want open-control-room energy with full data ownership, this is it.
 Runtime: **Docker** (recommended) or **Python 3.11+ / Node 18+**.
 
 Full setup guide: [docs/SELF_HOSTING.md](docs/SELF_HOSTING.md)
+
+### One-Line Install (non-technical)
+
+If Docker and Git are already installed, run:
+
+```bash
+curl -fsSL https://zell.kushvinth.com/install.sh | bash
+```
+
+Install page (HTML): [docs/one-line-install.html](docs/one-line-install.html)
 
 ### Option 1: Docker Compose (recommended)
 
@@ -64,6 +105,13 @@ Services start at:
 
 - **Frontend**: <http://localhost:3000>
 - **Backend API**: <http://localhost:8000>
+
+Docker files included:
+
+- `docker-compose.yml`
+- `backend/Dockerfile`
+- `frontend/Dockerfile`
+- `scripts/install.sh`
 
 ### Option 2: Local Development
 
@@ -89,7 +137,6 @@ Dev URLs:
 - **Backend API**: <http://localhost:8000>
 
 [Full configuration reference (all keys + examples).](docs/SELF_HOSTING.md)
-
 
 ## Star History
 
@@ -142,7 +189,7 @@ Dev URLs:
 - **Default:** all data stays local; no telemetry, no external calls except your configured LLM endpoint.
 - **CORS:** restrict `CORS_ORIGINS` to your real frontend domain in production.
 - **Storage:** `agents.db` and `agents_data/` should be mounted as persistent volumes and excluded from public access.
-- **Reverse proxy:** always put the backend behind Nginx / Caddy / Traefik before exposing publicly.
+- **Reverse proxy:** always put the backend behind a reverse proxy before exposing publicly.
 - **LLM traffic:** If using a remote LLM backend, ensure the connection is over a trusted network or VPN.
 
 Details: [Security policy](SECURITY.md) · [Self-hosting guide](docs/SELF_HOSTING.md)
@@ -151,7 +198,7 @@ Details: [Security policy](SECURITY.md) · [Self-hosting guide](docs/SELF_HOSTIN
 
 ## Production notes
 
-- Put the backend behind a reverse proxy (Nginx / Caddy / Traefik).
+- Put the backend behind a reverse proxy.
 - Restrict `CORS_ORIGINS` to your real frontend domain only.
 - Use persistent Docker volumes for `backend/agents_data` and `backend/agents.db`.
 - Pin your LLM model name and set resource limits before running scale tests.
