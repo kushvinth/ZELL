@@ -1,5 +1,3 @@
-# ZELL: Knowledge Intelligence & Multi-Agent Simulation Platform
-
 <p align="center">
     <picture>
         <source media="(prefers-color-scheme: light)" srcset="./assets/banner.png">
