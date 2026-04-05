@@ -21,7 +21,7 @@ It gives teams a command-center experience for running synthetic societies, trac
 
 If you want open-control-room energy with full data ownership, this is it.
 
-[Docs](docs/) · [Self-Hosting Guide](docs/SELF_HOSTING.md) · [API Reference](#api-reference) · [Quick Start](#quick-start) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)
+[Docs](docs/) · [Self-Hosting Guide](docs/SELF_HOSTING.md) · [API Reference](#docs) · [Quick Start](#quick-start) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)
 
 ---
 
@@ -37,12 +37,12 @@ If you want open-control-room energy with full data ownership, this is it.
 
 ## Core Capabilities
 
-- **[Agent Bootstrap](#how-to-use-zell)**: generate rich personas and seed a synthetic world with a single API call.
-- **[Simulation Orchestration](#how-to-use-zell)**: run multi-cycle scenarios with configurable events and time horizons.
-- **[Decision Persistence](#how-to-use-zell)**: every agent decision is stored and queryable across simulation runs.
-- **[Semantic + Fuzzy Search](#how-to-use-zell)**: hybrid search across all agent responses and run histories.
-- **[Graph Relationship Extraction](#how-to-use-zell)**: visualize agent connections in the workbench and atlas views.
-- **[API-first Architecture](#api-reference)**: build custom frontends or integrate with your existing tooling.
+- **[Agent Bootstrap](#everything-we-built-so-far)**: generate rich personas and seed a synthetic world with a single API call.
+- **[Simulation Orchestration](#everything-we-built-so-far)**: run multi-cycle scenarios with configurable events and time horizons.
+- **[Decision Persistence](#everything-we-built-so-far)**: every agent decision is stored and queryable across simulation runs.
+- **[Semantic + Fuzzy Search](#everything-we-built-so-far)**: hybrid search across all agent responses and run histories.
+- **[Graph Relationship Extraction](#everything-we-built-so-far)**: visualize agent connections in the workbench and atlas views.
+- **[API-first Architecture](#docs)**: build custom frontends or integrate with your existing tooling.
 
 ---
 
@@ -50,7 +50,7 @@ If you want open-control-room energy with full data ownership, this is it.
 
 Runtime: **Docker** (recommended) or **Python 3.11+ / Node 18+**.
 
-Full setup guide: [docs/SELF_HOSTING.md](docs/SELF_HOSTING.md)
+Full setup guide [here](docs/SELF_HOSTING.md)
 
 ### Option 1: Docker Compose (recommended)
 
@@ -90,50 +90,9 @@ Dev URLs:
 
 ---
 
-## How To Use ZELL
+## Star History
 
-### 1. Check system health
-
-```bash
-curl http://localhost:8000/health
-curl http://localhost:8000/api/llm/health
-```
-
-### 2. Bootstrap a world
-
-Generate personas and seed the simulation environment:
-
-```bash
-curl -X POST http://localhost:8000/api/bootstrap \
-  -H "Content-Type: application/json" \
-  -d '{"count": 1200, "with_agents": true}'
-```
-
-### 3. Start a simulation run
-
-Inject a world event and run multiple decision cycles:
-
-```bash
-curl -X POST http://localhost:8000/api/simulation/start \
-  -H "Content-Type: application/json" \
-  -d '{"event": "Global supply shock", "cycles": 3, "year": 2026}'
-```
-
-### 4. Explore results
-
-```bash
-# List all simulation runs
-GET /api/dashboard/runs
-
-# Get agent responses for a specific run
-GET /api/dashboard/runs/{run_id}/responses
-
-# Extract relationship graph
-GET /api/graph/relationships?run_id={run_id}
-
-# Hybrid search across responses
-GET /api/dashboard/search?q=inflation&mode=hybrid
-```
+[![Star History Chart](https://api.star-history.com/svg?repos=kushvinth/zell&type=date&legend=top-left)](https://www.star-history.com/#kushvinth/zell&type=date&legend=top-left)
 
 ---
 
@@ -149,37 +108,6 @@ CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
 ```
 
 [Full configuration reference (all keys + examples).](docs/SELF_HOSTING.md)
-
-### Key Environment Variables
-
-| Variable | Description | Example |
-|---|---|---|
-| `LLM_PROVIDER` | LLM backend provider | `ollama` |
-| `LLM_BASE_URL` | Base URL for the LLM service | `http://host.docker.internal:11434` |
-| `LLM_MODEL` | Model name to use | `qwen2.5:1.5b-instruct` |
-| `LLM_TIMEOUT` | Request timeout in seconds | `60` |
-| `LLM_MAX_TOKENS` | Max tokens per completion | `1024` |
-| `LLM_TEMPERATURE` | Sampling temperature | `0.7` |
-| `LLM_TOP_P` | Nucleus sampling threshold | `0.9` |
-| `CORS_ORIGINS` | Allowed frontend origins | `http://localhost:5173` |
-| `BOOTSTRAP_PROFILE_COUNT` | Profiles to generate on bootstrap | `1200` |
-| `BOOTSTRAP_AGENT_LIMIT` | Agent cap during bootstrap | `100` |
-| `SEMANTIC_SCAN_MAX_RESPONSES` | Max responses scanned for semantic search | `500` |
-
----
-
-## API Reference
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/health` | Service health check |
-| `GET` | `/api/llm/health` | LLM backend connectivity check |
-| `POST` | `/api/bootstrap` | Generate world data and seed agents |
-| `POST` | `/api/simulation/start` | Start a simulation run |
-| `GET` | `/api/dashboard/runs` | List all simulation runs |
-| `GET` | `/api/dashboard/runs/{run_id}/responses` | Get agent responses for a run |
-| `GET` | `/api/graph/relationships` | Extract relationship graph for a run |
-| `GET` | `/api/dashboard/search` | Hybrid search across responses |
 
 ---
 
@@ -269,12 +197,6 @@ AI/vibe-coded PRs welcome!
 - Security policy: [SECURITY.md](SECURITY.md)
 - Support guide: [SUPPORT.md](SUPPORT.md)
 - Funding: [.github/FUNDING.yml](.github/FUNDING.yml)
-
----
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=kushvinth/zell&type=date&legend=top-left)](https://www.star-history.com/#kushvinth/zell&type=date&legend=top-left)
 
 ---
 
