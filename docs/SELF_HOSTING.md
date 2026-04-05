@@ -9,6 +9,44 @@ You run the stack on your infrastructure, control your model endpoints, and keep
 
 ## Deployment Modes
 
+## Docker Compose (recommended)
+
+From repository root:
+
+```bash
+docker compose up --build -d
+```
+
+Services:
+
+- Frontend: `http://localhost:3000`
+- Backend API: `http://localhost:8000`
+
+Both services are attached to an explicit Docker bridge network (`zell-network`) for inter-service communication.
+
+Stop stack:
+
+```bash
+docker compose down
+```
+
+The stack uses persistent Docker volumes for:
+
+- persona markdown cache (`agents_data`)
+- SQLite database (`agents.db` via `ZELL_DB_PATH`)
+
+## One-line installer
+
+If Docker and Git are already installed:
+
+```bash
+curl -fsSL https://zell.kushvinth.com/install.sh | bash
+```
+
+Installer script in repo: `scripts/install.sh`
+
+Install page HTML: `docs/one-line-install.html`
+
 ## Local split services (developer mode)
 
 Backend:
@@ -49,7 +87,7 @@ Optional tuning:
 
 ## Security Checklist
 
-- Put backend behind TLS (Nginx/Caddy/Traefik)
+- Put backend behind TLS via a reverse proxy or load balancer
 - Restrict `CORS_ORIGINS` to trusted domains
 - Avoid exposing internal LLM endpoints publicly
 - Run with least-privilege container/user permissions
@@ -59,8 +97,8 @@ Optional tuning:
 
 Current backend data paths include:
 
-- `backend/agents.db`
-- `backend/agents_data/`
+- `backend/agents.db` (or `ZELL_DB_PATH`)
+- `backend/agents_data/` (or `ZELL_AGENTS_DATA_DIR`)
 
 For production, mount persistent volumes for both.
 
