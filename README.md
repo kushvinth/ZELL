@@ -90,7 +90,6 @@ Dev URLs:
 
 [Full configuration reference (all keys + examples).](docs/SELF_HOSTING.md)
 
-
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=kushvinth/ZELL&type=date&legend=top-left)](https://www.star-history.com/#kushvinth/ZELL&type=date&legend=top-left)
