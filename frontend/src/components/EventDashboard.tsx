@@ -11,8 +11,9 @@ import {
   AlertTriangle,
   Grid3x3,
   Columns,
+  FileDown,
 } from "lucide-react";
-import { API_BASE } from "@/lib/api";
+import { API_BASE, downloadRunReport } from "@/lib/api";
 import { ResponseCardCompact } from "./ResponseCardCompact";
 import { ResponseCardVertical } from "./ResponseCardVertical";
 import { CollapsibleSection } from "./CollapsibleSection";
@@ -171,6 +172,14 @@ function sanitizeTrustTarget(value?: string | null): string | undefined {
   if (!normalized) return undefined;
   if (/^(none|n\/a|unknown|null)$/i.test(normalized)) return undefined;
   return normalized;
+}
+
+function reportFileSafe(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "")
+    .slice(0, 48);
 }
 
 function sanitizeAgentResponse(response: AgentResponse): AgentResponse {
@@ -634,6 +643,9 @@ export function EventDashboard({ onClose }: EventDashboardProps) {
   const [page, setPage] = React.useState(1);
   const [totalPages, setTotalPages] = React.useState(1);
   const [totalResponses, setTotalResponses] = React.useState(0);
+  const [exportingFormat, setExportingFormat] = React.useState<
+    "pdf" | "html" | null
+  >(null);
 
   const searchTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(
     null,
@@ -716,6 +728,28 @@ export function EventDashboard({ onClose }: EventDashboardProps) {
     }
   }
 
+  async function handleExportReport(format: "pdf" | "html") {
+    if (!selectedRun || exportingFormat) return;
+    setExportingFormat(format);
+    try {
+      const blob = await downloadRunReport(selectedRun.run_id, format);
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      const eventPart = reportFileSafe(selectedRun.event_name || "simulation");
+      anchor.href = url;
+      anchor.download = `zell-report-${eventPart}-${selectedRun.run_id.slice(0, 8)}.${format}`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error(e);
+      window.alert("Failed to export report. Check backend logs and retry.");
+    } finally {
+      setExportingFormat(null);
+    }
+  }
+
   // ─── Render ─────────────────────────────────────────────────────────────────
 
   return (
@@ -725,9 +759,20 @@ export function EventDashboard({ onClose }: EventDashboardProps) {
         {/* ── Sidebar: Run List ── */}
         <aside className="w-48 sm:w-56 md:w-64 border-r border-white/[0.07] flex flex-col overflow-hidden bg-black/30 shrink-0">
           <div className="px-4 py-3 border-b border-white/[0.07]">
-            <p className="text-[9px] uppercase tracking-widest text-white/30">
-              Simulation Runs
-            </p>
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-[9px] uppercase tracking-widest text-white/30">
+                Simulation Runs
+              </p>
+              <button
+                onClick={() => handleExportReport("pdf")}
+                disabled={!selectedRun || exportingFormat !== null}
+                className="px-2 py-1 text-[8px] uppercase tracking-widest rounded border border-white/15 text-white/70 hover:text-white hover:border-[#FE6B36]/40 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center gap-1"
+                title="Export selected run as PDF report"
+              >
+                <FileDown className="w-3 h-3" />
+                {exportingFormat === "pdf" ? "Exporting" : "Export"}
+              </button>
+            </div>
           </div>
           <div className="flex-1 overflow-y-auto">
             {loadingRuns ? (
@@ -814,6 +859,29 @@ export function EventDashboard({ onClose }: EventDashboardProps) {
                 >
                   {selectedRun.status}
                 </span>
+              </div>
+
+              <div className="mt-3 flex items-center gap-2 flex-wrap">
+                <button
+                  onClick={() => handleExportReport("pdf")}
+                  disabled={exportingFormat !== null}
+                  className="px-3 py-1.5 text-[9px] uppercase tracking-widest rounded-lg border border-[#FE6B36]/50 text-[#FE6B36] hover:bg-[#FE6B36]/15 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-1.5"
+                >
+                  <FileDown className="w-3 h-3" />
+                  {exportingFormat === "pdf"
+                    ? "Exporting PDF..."
+                    : "Export Report PDF"}
+                </button>
+                <button
+                  onClick={() => handleExportReport("html")}
+                  disabled={exportingFormat !== null}
+                  className="px-3 py-1.5 text-[9px] uppercase tracking-widest rounded-lg border border-white/20 text-white/70 hover:text-white hover:border-white/40 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-1.5"
+                >
+                  <FileDown className="w-3 h-3" />
+                  {exportingFormat === "html"
+                    ? "Exporting HTML..."
+                    : "Export Report HTML"}
+                </button>
               </div>
 
               {/* Search + Filters + Layout Toggle */}

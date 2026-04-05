@@ -293,3 +293,17 @@ export async function sendWorkbenchQuery(payload: {
     related_edges: GraphEdge[];
   }>;
 }
+
+// ── Reports ───────────────────────────────────────────────
+export async function downloadRunReport(
+  runId: string,
+  format: "pdf" | "html" = "pdf",
+): Promise<Blob> {
+  const res = await fetch(
+    `${API_BASE}/api/runs/${encodeURIComponent(runId)}/report?format=${format}`,
+  );
+  if (!res.ok) {
+    throw new Error(`Report export failed: ${res.status} ${res.statusText}`);
+  }
+  return res.blob();
+}

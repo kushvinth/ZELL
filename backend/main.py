@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any, Optional
 import asyncio
 import logging
+import io
 import json
 import psutil
 import os
@@ -13,6 +14,7 @@ from datetime import datetime
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse, Response
 from app.services.cache import TTLCache
 from app.services.profile_generator import build_profile_pool
 from app.services.persona_generator import generate_agent_persona
@@ -24,6 +26,11 @@ from app.services.search import (
     fuzzy_search,
     reload_index_from_db,
     get_search_index,
+)
+from app.services.report_export import (
+    build_report_data,
+    render_report_html,
+    render_report_pdf,
 )
 from app.simulation.agent import Agent
 from app.simulation.memory import create_memory_system
@@ -90,9 +97,16 @@ init_db()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:4173",
+        "http://127.0.0.1:4173",
+    ],
+    # Accept local dev/preview ports without hardcoding every single one.
+    allow_origin_regex=r"https?://(localhost|127\.0\.0\.1|0\.0\.0\.0)(:\d+)?$",
     allow_credentials=True,
-    allow_methods=["GET", "POST"],
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
@@ -1648,6 +1662,78 @@ def dashboard_run_evolution(run_id: str) -> dict[str, Any]:
         raise
     except Exception as e:
         logger.error(f"Dashboard evolution error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/runs/{run_id}/report/data")
+def run_report_data(run_id: str) -> dict[str, Any]:
+    """Return deterministic, structured report data for a simulation run."""
+    try:
+        run = get_simulation_run(run_id)
+        if not run:
+            raise HTTPException(status_code=404, detail="Run not found")
+        return build_report_data(run_id)
+    except HTTPException:
+        raise
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e)) from e
+    except Exception as e:
+        logger.error(f"Report data error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/runs/{run_id}/report")
+def run_report_export(
+    run_id: str,
+    format: str = Query("pdf", regex="^(pdf|html|json|md)$"),
+):
+    """
+    Export simulation report.
+    - pdf: primary format with embedded charts
+    - html: interactive React report
+    - md: MiroFish-style text report
+    - json: structured report payload for reproducibility/debugging
+    """
+    try:
+        report_data = build_report_data(run_id)
+        safe_run = run_id.replace("/", "_")
+
+        if format == "json":
+            return JSONResponse(report_data)
+
+        if format == "md":
+            from app.services.report_export import render_report_md
+
+            md_content = render_report_md(report_data)
+            return Response(
+                content=md_content,
+                media_type="text/markdown",
+                headers={
+                    "Content-Disposition": f'attachment; filename="zell-report-{safe_run}.md"'
+                },
+            )
+
+        if format == "html":
+            html_content = render_report_html(report_data)
+            filename = f"zell-report-{safe_run}.html"
+            return HTMLResponse(
+                html_content,
+                headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+            )
+
+        pdf_bytes = render_report_pdf(report_data)
+        filename = f"zell-report-{safe_run}.pdf"
+        return StreamingResponse(
+            io.BytesIO(pdf_bytes),
+            media_type="application/pdf",
+            headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+        )
+    except HTTPException:
+        raise
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e)) from e
+    except Exception as e:
+        logger.error(f"Report export error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
