@@ -12,7 +12,13 @@ import {
   Wind,
   Droplets,
   Zap,
+  Cpu,
 } from "lucide-react";
+import {
+  fetchLLMModels,
+  setLLMModel as setActiveLLMModel,
+  type LLMModelOption,
+} from "../lib/api";
 
 interface ControlPanelProps {
   agentCount: number;
@@ -92,6 +98,11 @@ export function ControlPanel({
   const [windSpeed, setWindSpeed] = React.useState(12);
   const [rainfall, setRainfall] = React.useState(45);
   const [conflictLevel, setConflictLevel] = React.useState(30);
+  const [models, setModels] = React.useState<LLMModelOption[]>([]);
+  const [selectedModel, setSelectedModel] = React.useState("");
+  const [modelsLoading, setModelsLoading] = React.useState(false);
+  const [switchingModel, setSwitchingModel] = React.useState(false);
+  const [modelsError, setModelsError] = React.useState<string | null>(null);
   const isDragging = React.useRef(false);
   const startX = React.useRef(0);
   const startW = React.useRef(0);
@@ -122,6 +133,51 @@ export function ControlPanel({
       window.removeEventListener("mouseup", onUp);
     };
   }, []);
+
+  const loadModels = React.useCallback(async () => {
+    setModelsLoading(true);
+    setModelsError(null);
+    try {
+      const payload = await fetchLLMModels();
+      const discovered = payload.models ?? [];
+      setModels(discovered);
+      setSelectedModel(payload.current_model || discovered[0]?.name || "");
+      if (payload.error) {
+        setModelsError(payload.error);
+      }
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Failed to fetch models";
+      setModelsError(message);
+      setModels([]);
+    } finally {
+      setModelsLoading(false);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    void loadModels();
+  }, [loadModels]);
+
+  const handleModelChange = async (nextModel: string) => {
+    if (!nextModel || nextModel === selectedModel) return;
+    const previousModel = selectedModel;
+    setSelectedModel(nextModel);
+    setSwitchingModel(true);
+    setModelsError(null);
+    try {
+      const response = await setActiveLLMModel(nextModel);
+      setSelectedModel(response.model);
+      await loadModels();
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Failed to switch model";
+      setModelsError(message);
+      setSelectedModel(previousModel);
+    } finally {
+      setSwitchingModel(false);
+    }
+  };
 
   const era =
     currentYear < 1000
@@ -187,6 +243,59 @@ export function ControlPanel({
                   displayValue={spawnCount.toLocaleString()}
                   icon={Users}
                 />
+              </div>
+
+              <Separator className="my-5" />
+
+              {/* LLM Model */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-[9px] font-bold uppercase tracking-widest text-white/40 flex items-center gap-2">
+                    <Cpu className="w-3.5 h-3.5" /> LLM Model
+                  </h3>
+                  <button
+                    onClick={() => void loadModels()}
+                    disabled={modelsLoading || switchingModel}
+                    className="text-[9px] uppercase tracking-widest text-[#FE6B36]/80 hover:text-[#FE6B36]/95 transition-colors duration-150 disabled:opacity-50"
+                  >
+                    Refresh
+                  </button>
+                </div>
+
+                <div className="space-y-1.5">
+                  <span className="text-[9px] uppercase tracking-widest text-white/40">
+                    Active Model
+                  </span>
+                  <select
+                    value={selectedModel}
+                    onChange={(e) => void handleModelChange(e.target.value)}
+                    disabled={
+                      modelsLoading || switchingModel || models.length === 0
+                    }
+                    className="w-full bg-input border border-border rounded px-2 py-2 text-xs text-foreground outline-none focus:ring-1 focus:ring-[#FE6B36] disabled:opacity-50"
+                  >
+                    {modelsLoading ? (
+                      <option value="">Loading models...</option>
+                    ) : models.length === 0 ? (
+                      <option value="">No models available</option>
+                    ) : (
+                      models.map((model) => (
+                        <option key={model.name} value={model.name}>
+                          {model.name}
+                        </option>
+                      ))
+                    )}
+                  </select>
+
+                  <div className="flex justify-between text-[10px] text-white/50 font-mono">
+                    <span>{models.length} installed</span>
+                    <span>{switchingModel ? "switching..." : "ready"}</span>
+                  </div>
+
+                  {modelsError && (
+                    <p className="text-[10px] text-red-400">{modelsError}</p>
+                  )}
+                </div>
               </div>
 
               <Separator className="my-5" />

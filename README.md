@@ -1,7 +1,7 @@
 <p align="center">
     <picture>
         <source media="(prefers-color-scheme: light)" srcset="./assets/banner.png">
-        <img src="./assets/banner.png" alt="ZELL" width="600">
+        <img src="./assets/banner.jpeg" alt="ZELL" width="600">
     </picture>
 </p>
 
