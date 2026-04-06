@@ -27,11 +27,7 @@ If you want open-control-room energy with full data ownership, this is it.
 
 ## Why ZELL
 
-- **Self-hosted by design**: keep your data, prompts, and outputs inside your own stack.
-- **FastAPI + React**: clean API-first backend, easy to extend and integrate.
-- **Stateful agents**: generated personas, evolving memory, and cycle-based decisions.
-- **Rich knowledge surfaces**: semantic search, run history, graph relationships, and dashboard endpoints.
-- **Local-first LLM support**: Ollama/LocalAI compatible, fully environment-driven configuration.
+ZELL is built for those who want full control over their simulations. It is completely self-hosted by design, keeping all your data, prompts, agent memories, and outputs securely within your own infrastructure with zero telemetry or cloud dependency. With native support for Ollama and LocalAI, it delivers powerful multi-agent orchestration and synthetic society simulations while ensuring complete data sovereignty and privacy.
 
 ---
 
